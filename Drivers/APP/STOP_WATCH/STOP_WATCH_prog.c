@@ -26,12 +26,12 @@ void STW_voidStart(void) //start count
 
 }  
      
-u16  STW_u16StopANDWatch(void)  // Stop counting and init STW
+STW_u16StopANDWatch_usec(void)  // Stop counting and init STW IN microsecond
 {
 	
 }
 
-u16  STW_u16Watch(void)         //counting will continue
+u16  STW_u16Watch__usec(void)         //counting will continue
 {
 	
 }
