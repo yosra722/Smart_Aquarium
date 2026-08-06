@@ -7,7 +7,7 @@
 #ifndef ADC_PRIVATE_H
 #define ADC_PRIVATE_H
 
-
+typedef void (*pf) (void);
 
 /*ADMUX*/
 #define ADMUX					*((volatile u8*)0x27)

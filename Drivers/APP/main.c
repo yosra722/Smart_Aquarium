@@ -1,82 +1,118 @@
-#include "STD_Types.h"
+/*****************************************/
+/******** File  : main.c              *****/
+/******** Purpose: Integration/Test    *****/
+/*****************************************/
+
 #include "Bit_Math.h"
+#include "STD_Types.h"
 
-#include "DIO_int.h"
-
-#include "GIE_int.h"
-#include "TIM0_int.h"
-#include "STOP_WATCH_int.h"
-#include "LCD_int.h"
+#define F_CPU 8000000UL
 #include <util/delay.h>
 
+#include "DIO_int.h"
+#include "GIE_int.h"
+#include "EXTI_int.h"
 
-void LCD_voidPrintNumber(u32 Copy_u32Number);
+#include "TIM0_int.h"
+#include "TIM2_int.h"
+#include "STOP_WATCH_int.h"
+
+#include "ADC_int.h"
+#include "LCD_int.h"
+#include "LM35_int.h"
+
+#include "SERVO_interface.h"
+
+
+/*---------------------------------------------------------*/
+/* Watchdog-related registers (ATmega32) - defined manually,
+ * same style as the rest of the project (no ready-made lib) */
+/*---------------------------------------------------------*/
+#define MCUCSR   *((volatile u8*)0x54)
+#define WDTCR    *((volatile u8*)0x41)
+#define WDRF     0
+#define WDCE     4
+#define WDE      3
+
+
+extern volatile u8 seconds_counter ;
+u16 TEMP;
+
+void LM35(void)
+{
+	if(TEMP <= 20)
+	{
+		DIO_voidSetPinValue(PORTCID, PIN0, HIGH);
+	}
+	else
+	{
+		DIO_voidSetPinValue(PORTCID, PIN0, LOW);
+	}
+
+	if(TEMP != LM35_u16GetTemp())
+	{
+		TEMP = LM35_u16GetTemp();
+		LM35_DisplayTemp();
+	}
+}
+
+
 
 int main(void)
 {
+	/* Disable Watchdog Timer immediately at startup
+	 * (must be the very first thing done, or a leftover/default-enabled
+	 * WDT will keep resetting the MCU every couple of seconds) */
+	MCUCSR &= ~(1 << WDRF);
+	WDTCR  |= (1 << WDCE) | (1 << WDE);
+	WDTCR   = 0x00;
 
-    DIO_voidSetPortDirection(PORTAID, OUTPUT);
-    DIO_voidSetPortValue(PORTAID, 0x00);
+	DIO_voidInitialization();
+	EXTI_Initilization();
+	LCD_voidIntialization();
 
-    DIO_VoidSetPinDirection(PORTBID, PIN0, OUTPUT); // RS
-    DIO_VoidSetPinDirection(PORTBID, PIN1, OUTPUT); // RW
-    DIO_VoidSetPinDirection(PORTBID, PIN2, OUTPUT); // E
+	/* LM35 one-time setup: ADC init + LM35 output pin direction */
+	LM35_voidInit();
+	DIO_VoidSetPinDirection(PORTCID, PIN0, OUTPUT);
+	DIO_voidSetPinValue(PORTCID, PIN0, LOW);
+
+	SERVO_voidInit();
+	STW_voidInitialization();
+	TIM2_voidInitCTC();
+	Ultrasonic_Init( );
+
+	GIE_voidEnable();
+
+	SERVO_voidSetAngle(0);
+
+	while (1)
+	{
+
+		u16 distance = Ultrasonic_GetDistance() ;
+
+			LCD_voidWriteString("Level is -" , 1 );
+
+			LCD_GotoXY(10,1);
+			LCD_voidWriteNumber(distance);
+			LCD_voidWriteMoveString(" cm");
 
 
-    TIM0_voidInitialization();
-    GIE_voidEnable( );
+		if(seconds_counter == 60)
+		{
+			SERVO_voidSetAngle(180);
+			_delay_ms(3000);
+			SERVO_voidSetAngle(0);
+		}else if(seconds_counter >= 120)
+		{
+			SERVO_voidSetAngle(180);
+			seconds_counter=0;
+			_delay_ms(3000);
+			SERVO_voidSetAngle(0);
+		}
 
-    LCD_voidIntialization();
-    STW_voidInitialization();
-
-    LCD_voidWriteString((u8*)" STW TEST START", 0);
-
-
-    while (1)
-    {
-        LCD_voidSendCommand(0x01); // Clear Display
-
-
-        LCD_voidSendCommand(0x01);
-        _delay_ms(2);
-
+		LM35();
+	}
 
 
-        STW_voidStart();
-        _delay_us(5);                              // 2000us = 2ms
-        u16 Local_u16MeasuredUs = STW_u16StopANDWatch_usec();
-
-        LCD_voidWriteString((u8*)"Meas:", 1);
-        LCD_voidPrintNumber((u32)Local_u16MeasuredUs);
-        LCD_voidSendData('u');
-        LCD_voidSendData('s');
-
-        _delay_ms(3000);
-    }
-
-    return 0;
-}
-void LCD_voidPrintNumber(u32 Copy_u32Number)
-{
-    u8 Local_u8Buffer[100];
-    s8 Local_s8Index = 0;
-
-    if (Copy_u32Number == 0)
-    {
-        LCD_voidSendData('0');
-        return;
-    }
-
-    while (Copy_u32Number > 0)
-    {
-        Local_u8Buffer[Local_s8Index] = (Copy_u32Number % 10) + '0';
-        Copy_u32Number /= 10;
-        Local_s8Index++;
-    }
-
-    while (Local_s8Index > 0)
-    {
-        Local_s8Index--;
-        LCD_voidSendData(Local_u8Buffer[Local_s8Index]);
-    }
+	return 0;
 }

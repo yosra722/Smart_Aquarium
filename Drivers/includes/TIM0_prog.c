@@ -7,7 +7,6 @@
 
 #include "Bit_Math.h"
 #include "STD_Types.h"
-
 #include "util/delay.h"
 
 #include "TIM0_int.h"

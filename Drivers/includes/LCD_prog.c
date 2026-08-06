@@ -4,6 +4,7 @@
 /************** File  : Program File  ***********/
 /********* Last Update: 30/07/2026   ************/
 /************************************************/
+
 #include "Bit_Math.h"
 #include "STD_Types.h"
 
@@ -155,14 +156,14 @@ void LCD_voidWriteMoveString(u8* u8string)
 
 static void LCD_voidPutonBus(u8 u8char)
 {
-	DIO_voidSetPinValue(LCD_D0 ,Get_Bit(u8char,0));
-	DIO_voidSetPinValue(LCD_D1 ,Get_Bit(u8char,1));
-	DIO_voidSetPinValue(LCD_D2 ,Get_Bit(u8char,2));
-	DIO_voidSetPinValue(LCD_D3 ,Get_Bit(u8char,3));
-	DIO_voidSetPinValue(LCD_D4 ,Get_Bit(u8char,4));
-	DIO_voidSetPinValue(LCD_D5 ,Get_Bit(u8char,5));
-	DIO_voidSetPinValue(LCD_D6 ,Get_Bit(u8char,6));
-	DIO_voidSetPinValue(LCD_D7 ,Get_Bit(u8char,7));
+	DIO_voidSetPinValue(LCD_D0 ,GET_BIT(u8char,0));
+	DIO_voidSetPinValue(LCD_D1 ,GET_BIT(u8char,1));
+	DIO_voidSetPinValue(LCD_D2 ,GET_BIT(u8char,2));
+	DIO_voidSetPinValue(LCD_D3 ,GET_BIT(u8char,3));
+	DIO_voidSetPinValue(LCD_D4 ,GET_BIT(u8char,4));
+	DIO_voidSetPinValue(LCD_D5 ,GET_BIT(u8char,5));
+	DIO_voidSetPinValue(LCD_D6 ,GET_BIT(u8char,6));
+	DIO_voidSetPinValue(LCD_D7 ,GET_BIT(u8char,7));
 
 	DIO_voidSetPinValue(LCD_EN, HIGH);
 	_delay_ms(2);

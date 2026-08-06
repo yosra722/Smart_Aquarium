@@ -21,7 +21,7 @@ void DIO_voidInitialization(void)
 	DDRD = DIO_PORTD_DIRECTIONS ;
 }
 /** mode set*/
-void DIO_VoidSetPinDirection (u8 PortID, u8 PinID, u8 Direction)
+void DIO_voidSetPinDirection (u8 PortID, u8 PinID, u8 Direction)
 {
 	if(PinID <10 && PortID < 4)
 	{

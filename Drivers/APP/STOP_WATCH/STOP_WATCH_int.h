@@ -13,6 +13,3 @@ u16 STW_u16StopANDWatch_usec(void);    // Stop counting and init STW
 
 
 #endif
-#ifndef F_CPU
-#define F_CPU 8000000UL
-#endif

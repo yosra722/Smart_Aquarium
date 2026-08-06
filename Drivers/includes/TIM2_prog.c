@@ -4,13 +4,12 @@
 /* Version ................ : V1.0                                            */
 /* Target MCU ............. : ATmega32                                        */
 /******************************************************************************/
-#include "Bit_Math.h"
-#include "STD_Types.h"
-#include <stddef.h>
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
 
-#include "TIM2_private.h"
-#include "TIM2_config.h"
-#include "TIM2_int.h"
+#include "TIM2_Private.h"
+#include "TIM2_Config.h"
+#include "TIM2_Interface.h"
 
 
 
@@ -22,18 +21,17 @@
 static pf TIM2_pvOVFCallBackFunc  = NULL;
 static pf TIM2_pvCOMPCallBackFunc = NULL;
 static u16 overflow_counter = 0;
-static u16 millis_counter = 0;   /* used by TIM2_voidInitCTC for the 1ms tick */
 volatile u8 seconds_counter = 0; /* Global time counter for main.c */
 
 void TIM2_voidInit(void)
 {
 	#if TIM2_MODE == TIM2_NORMAL_MODE
 	CLR_BIT(TCCR2, WGM20);
-	CLR_BIT(TCCR2, WGM21);
+	CLR_BIT(TCCR2, WGM201);
 
 	#elif TIM2_MODE == TIM2_CTC_MODE
 	CLR_BIT(TCCR2, WGM20);
-	SET_BIT(TCCR2, WGM21);
+	SET_BIT(TCCR2, WGM201);
 
 	#elif TIM2_MODE == TIM2_FAST_PWM_MODE
 	SET_BIT(TCCR2, WGM21);
@@ -140,58 +138,22 @@ void TIM2_voidInitFastPWMWithInterrupt(void) {
     SET_BIT(TCCR2, WGM21);
 
     /* Hardware PWM output on PB3 (OC2 pin) for Pump control */
-    CLR_BIT(TCCR2, COM20);
+    CLEAR_BIT(TCCR2, COM20);
     SET_BIT(TCCR2, COM21);
 
     /* Clock Prescaler = 64 (F_CPU / 64) */
     SET_BIT(TCCR2, CS21);
     SET_BIT(TCCR2, CS20);
-    CLR_BIT(TCCR2, CS22);
+    CLEAR_BIT(TCCR2, CS22);
 
     /* Enable Overflow Interrupt for background timing */
     SET_BIT(TIMSK, TOIE2);
-
-    overflow_counter = 0;
-    seconds_counter = 0 ;
-}
-
-/* Initialize Timer2 in CTC mode to generate a precise 1ms tick,
- * which is accumulated into seconds_counter (accurate alternative
- * to the overflow-based approximation in TIM2_voidInitFastPWMWithInterrupt) */
-void TIM2_voidInitCTC(void)
-{
-	/* Select CTC mode (WGM21 = 1, WGM20 = 0) */
-	SET_BIT(TCCR2, WGM21);
-	CLR_BIT(TCCR2, WGM20);
-
-	/* Target value for 1ms tick (8MHz / 64 prescaler = 125kHz -> 249 counts = 2 ms) */
-	OCR2 = 249;
-
-	/* Enable Timer2 Compare Match interrupt */
-	SET_BIT(TIMSK, OCIE2);
-
-	/* Prescaler = 64 (CS22 = 1, CS21 = 0, CS20 = 0) */
-	SET_BIT(TCCR2, CS22);
-	CLR_BIT(TCCR2, CS21);
-	CLR_BIT(TCCR2, CS20);
-
-	millis_counter  = 0;
-	seconds_counter = 0;
 }
 
 /* ISRs */
 void __vector_4 (void) __attribute__ ((signal, used));
 void __vector_4 (void)
 {
-	/* 1ms tick accounting (only meaningful while running in CTC mode,
-	 * i.e. after TIM2_voidInitCTC() ) */
-	millis_counter=millis_counter+2;
-	if (millis_counter >= 1000)
-	{
-		seconds_counter++;
-		millis_counter = 0;
-	}
-
 	if (TIM2_pvCOMPCallBackFunc != NULL)
 	{
 		TIM2_pvCOMPCallBackFunc();
@@ -204,10 +166,8 @@ void __vector_5 (void)
 {
 	overflow_counter++;
 
-    /* 488 overflows equal 1 second (488 * 2.048ms  1000ms) */
-    if (overflow_counter >= 488)
-    {
-
+    /* 488 overflows equal 1 second (488 * 2.048ms ≈ 1000ms) */
+    if (overflow_counter >= 488) {
         seconds_counter++;      /* Increment second counter */
         overflow_counter = 0;   /* Reset tick counter */
     }
