@@ -24,7 +24,7 @@ void LM35_voidInit(void)
 	ADC_voidADCEnable();
 	ADC_voidInterruptEnable();
 	LCD_GotoXY(0,0);
-	LCD_voidWriteString("TEMP : ");
+	LCD_voidWriteMoveString("TEMP : ");
 }
 u16 LM35_u16GetTemp(void)
 {
@@ -43,22 +43,22 @@ u16 LM35_u16GetTemp(void)
 void LM35_voidINT(void)
 {
 
-	DIO_voidSetPinDirection(PORT_C,PIN0,OUTPUT );
-	DIO_voidSetPinValue(PORT_C,PIN0,HIGH);
+	DIO_voidSetPinDirection(PORTCID,PIN0,OUTPUT );
+	DIO_voidSetPinValue(PORTCID,PIN0,HIGH);
 	_delay_ms(100);
-	DIO_voidSetPinValue(PORT_C,PIN0,LOW);
+	DIO_voidSetPinValue(PORTCID,PIN0,LOW);
 }
 void LM35_DisplayTemp(void)
 {
 	LM35_voidClearTem();
 	LCD_GotoXY(7,0);
 	LCD_voidWriteNumber(LM35_u16GetTemp());
-	LCD_voidWriteString(" C");
+	LCD_voidWriteMoveString(" C");
 }
 
 
 static void LM35_voidClearTem(void)
 {
-	LCD_GotoXY(14,0);
-	LCD_voidWriteString("   ");
+	LCD_GotoXY(7,0);
+	LCD_voidWriteMoveString("   ");
 }
