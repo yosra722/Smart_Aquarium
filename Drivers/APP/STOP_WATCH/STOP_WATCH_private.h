@@ -10,7 +10,6 @@
 
 
 static void TIM0_voidCallback(void);
-static u16 TIM0_u16Callback(u16 OV_counts , u16 u16CurrentRegValue );
 static u16 TIM0_u16ConvertFromCountstoMicrosecound(u16 OV_counts , u16 u16CurrentRegValue );
 
 #define TICK_TIME_nSEC   ((PERSCALLER_MODE *1000000000 ) / F_CPU)

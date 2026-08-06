@@ -28,9 +28,8 @@ void STW_voidInitialization(void)
 	TIM0_voidSetOVReg(0);
 	//disable Tim0
 	TIM0_voidDisableOVInterrupt();
+	TIM0_voidSetMode(TIM0_OVERFLOW);
 
-
-	
 }
 void STW_voidStart(void) //start count
 {
@@ -54,7 +53,6 @@ u16 STW_u16StopANDWatch_usec(void)  // Stop counting and init STW IN microsecond
 	OV_count = 0 ;
 
 	return u16TimeInMicrosecound ;
-
 
 }
 
