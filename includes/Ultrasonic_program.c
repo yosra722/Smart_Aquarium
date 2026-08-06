@@ -28,7 +28,6 @@ void Ultrasonic_Init(void)
 	EXTI0_SetCallBack (Ultrasonic_ISR);
 	EXTI0_SetSenseMode (ANY_CHANGE);
 	EXTI0_InterruptEnable ();
-	GIE_voidEnable();
 }
 
  void Ultrasonic_Trigger(void)

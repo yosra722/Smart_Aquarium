@@ -49,12 +49,13 @@ u16 STW_u16StopANDWatch_usec(void)
     u16 Local_u16OVCount;
     u16 Local_u16Result;
 
-    GIE_voidDisable();
+    TIM0_voidDisableOVInterrupt();
+    //GIE_voidDisable();
     TIM0_u16CurrentRegValue = (u16)TIM0_u8ReadOVReg();
     Local_u16OVCount = (u16)OV_count;
-    GIE_voidEnable();
+    //GIE_voidEnable();
 
-    TIM0_voidDisableOVInterrupt();
+
 
     Local_u16Result = TIM0_u16CurrentRegValue + (256 * Local_u16OVCount);
 

@@ -19,6 +19,7 @@ typedef float              f32;
 typedef double             f64;
 typedef long double        f128;
 
-typedef void  (*pf) (void) ; // pointer to function
-
+typedef void  (*pf)     (void) ; // pointer to function
+typedef void  (*pf_u8) (u8)    ;
+#define NULL    0x00
 #endif

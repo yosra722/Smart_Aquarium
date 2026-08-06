@@ -19,7 +19,7 @@
 
 void LM35_voidInit(void)
 {
-	DIO_voidSetPinDirection(LM35_VOUT,INPUT);
+	DIO_VoidSetPinDirection(LM35_VOUT,INPUT);
 	ADC_voidInit();
 	ADC_voidADCEnable();
 	LCD_GotoXY(0,0);

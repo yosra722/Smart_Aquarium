@@ -1,79 +1,139 @@
-/************************************************/
-/************** Author: Khadija Naji ************/
-/************** Date  : 02/08/2026   ************/
-/************** File  : Program File  ***********/
-/********* Last Update: 02/08/2026   ************/
-/************************************************/
+/*****************************************/
+/******** Author: Yosra Madkour **********/
+/******** Date  : 3/8/2026   *************/
+/******** File  : Program File ***********/
+/*****************************************/
 
 #include "Bit_Math.h"
 #include "STD_Types.h"
 
-#include "ADC_int.h"
+
+
+#include "DIO_int.h"
 #include "ADC_config.h"
+#include "ADC_int.h"
 #include "ADC_private.h"
 
 
-
-// SET PIN CHANNAL TO INPUT IN DIO
-pf ADC_CallBack;
-void ADC_voidInitialization (void)
+void ADC_voidInit(void)
 {
-/**
- 0- SET PIN CHANNAL TO INPUT IN DIO
- 1- set defult channal // #define ADC_DEFAULT_CHANNAL  CHANNAL0_SINGLE OR DIFFRITIAL   --->  ADMUX BIT4-->0
- 2- SET DEFAULT LEFT/RIGHT ADJUST  // #define ADC_DEFAULT_ADJUST --->  ADMUX BIT5
- 3- SET DEFAULT REFRANCE SOURCE     --->  ADMUX BIT7 , 6
- 4- SET CONVERSION TRIGGER IF FREE (AUTO / START )
- 5- SET TRIIGER TYPE (FREE / EXTERNAL )
- 6- CLEAR INTERRUPT
- 7- CLEAR FLAG
- 8- DEFAULT FREQ
- */
+	ADC_voidADCDisable();
+	CLR_BIT(ADCSRA,ADSC);
+	CLR_BIT(ADCSRA,ADATE);
+	CLR_BIT(ADCSRA,ADIE);
+	SET_BIT(ADCSRA,ADIF);
 
-/**	void ADC_voidInit(void);
-	//Disable ADC
-	//Disable Start Conveerion
-	//Disable Auto Trigger
-	//Clear Interrupt Flag
-	//Disable ADC Interrupt
-	//Select Left or Right Adlustment
-	// Slect ADC Channel
-	// Select Clock Prescaller
-	 *
-*/
-	//Disable ADC
-CLR_BIT(ADCSRA,ADC_ENABLE_BIT);
+	#if REG_ADJ == RIGHT_ADJUSTMEN
+	CLR_BIT(ADMUX,ADLAR);
+	#elif REG_ADJ == LEFT_ADJUSTMEN
+	SET_BIT(ADMUX,ADLAR);
+	#endif
+
+	ADC_voidSelectChannel(ADC_CHANNEL);
+	ADC_voidSelectClock();
+	ADC_voidSelectRef(REF_SOURCE);
+
 }
 
 
-void ADC_voidEnable(void)
-{}
-void ADC_voidDisable(void)
-{}
 
-void ADC_voidStartConversion(void)
-{} //Bit 6 – ADSC: ADC Start Conversion at ADCSRA & enable ADC
-void ADC_voidAutoTrigger(void) //Bit 6 at ADCSRA //Set auto Trigger Enable //set the source of auto Trigger
-{//Set auto Trigger Enable
-	//set the source of auto Trigger
+
+void ADC_voidADCEnable(void)
+{
+	SET_BIT(ADCSRA,ADEN);
 }
-void ADC_voidSetTriggerSourse(u8 u8TriggerSourseID)
-{}
-void ADC_voidInterruptEnable(void)
-{}
-void ADC_voidInterruptDisable(void)
-{}
+
+
+void ADC_voidADCDisable(void){
+	CLR_BIT(ADCSRA,ADEN);
+}
+
+void ADC_voidSelectChannel(u8 u8channel)
+{
+	ADMUX &= 0xE0;
+	ADMUX |= u8channel;
+
+
+}
+
+void ADC_voidSelectRef(u8 u8ref)
+{
+	switch(u8ref){
+	case AREF:
+		CLR_BIT(ADMUX,REFS0);
+		CLR_BIT(ADMUX,REFS1);
+		break;
+	case AVCC:
+		SET_BIT(ADMUX,REFS0);
+		CLR_BIT(ADMUX,REFS1);
+		break;
+	case Internal_REF:
+		SET_BIT(ADMUX,REFS0);
+		SET_BIT(ADMUX,REFS1);
+		break;
+	}
+
+}
+
+void ADC_voidSelectClock(void)
+{
+    SET_BIT(ADCSRA, ADPS2);
+    SET_BIT(ADCSRA, ADPS1);
+    SET_BIT(ADCSRA, ADPS0);
+}
+
 u16 ADC_u16Read(void)
 {
-#if REG_ADJ == LEFT_ADJUSTMEN
-		//read ADCH;
+	u16 value ;
+
+	while(!Get_Bit(ADCSRA, ADIF));
+	SET_BIT(ADCSRA, ADIF);
+
+	u16 low_reg=ADCL;
+	u16 high_reg = ADCH;
+
+	#if REG_ADJ == LEFT_ADJUSTMEN
+		value = (low_reg>>6)|(high_reg<<2);
 	#elif REG_ADJ == RIGHT_ADJUSTMEN
-	// read ADCH##ADCL;
+		value = low_reg | (high_reg<<8);
 	#endif
+
+	return value;
 }
 
 
 
+
+void ADC_voidStartConverstion()
+{
+	SET_BIT(ADCSRA,ADSC);
+}
+
+
+
+void ADC_voidAutoTrigger(void)
+{
+
+	SET_BIT(ADCSRA,ADATE);
+	SFIOR &=0x1F;
+	SFIOR |=(FREE_RUNNING<<5);
+
+
+}
+
+
+
+
+void ADC_voidInterruptEnable(void)
+{
+	SET_BIT(ADCSRA,ADIE);
+}
+void ADC_voidInterruptDisable(void)
+{
+	CLR_BIT(ADCSRA,ADIE);
+}
+
+pf ADC_CallBack;
 
 void ADC_voidSetCallBack(pf FunctionAddress)
 {
@@ -86,5 +146,4 @@ void __vector_20(void)
 {
 	ADC_CallBack();
 }
-
 
