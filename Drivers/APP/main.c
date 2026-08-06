@@ -24,10 +24,8 @@
 #include "SERVO_interface.h"
 
 
-/*---------------------------------------------------------*/
-/* Watchdog-related registers (ATmega32) - defined manually,
- * same style as the rest of the project (no ready-made lib) */
-/*---------------------------------------------------------*/
+
+
 #define MCUCSR   *((volatile u8*)0x54)
 #define WDTCR    *((volatile u8*)0x41)
 #define WDRF     0
@@ -37,32 +35,16 @@
 
 extern volatile u8 seconds_counter ;
 u16 TEMP;
+u16 LastDistance = 0;
 
-void LM35(void)
-{
-	if(TEMP <= 20)
-	{
-		DIO_voidSetPinValue(PORTCID, PIN0, HIGH);
-	}
-	else
-	{
-		DIO_voidSetPinValue(PORTCID, PIN0, LOW);
-	}
-
-	if(TEMP != LM35_u16GetTemp())
-	{
-		TEMP = LM35_u16GetTemp();
-		LM35_DisplayTemp();
-	}
-}
-
+void SERVO(void);
+void Ultrasonic(void);
+void LM35(void);
 
 
 int main(void)
 {
-	/* Disable Watchdog Timer immediately at startup
-	 * (must be the very first thing done, or a leftover/default-enabled
-	 * WDT will keep resetting the MCU every couple of seconds) */
+
 	MCUCSR &= ~(1 << WDRF);
 	WDTCR  |= (1 << WDCE) | (1 << WDE);
 	WDTCR   = 0x00;
@@ -87,32 +69,78 @@ int main(void)
 
 	while (1)
 	{
-
-		u16 distance = Ultrasonic_GetDistance() ;
-
-			LCD_voidWriteString("Level is -" , 1 );
-
-			LCD_GotoXY(10,1);
-			LCD_voidWriteNumber(distance);
-			LCD_voidWriteMoveString(" cm");
-
-
-		if(seconds_counter == 60)
-		{
-			SERVO_voidSetAngle(180);
-			_delay_ms(3000);
-			SERVO_voidSetAngle(0);
-		}else if(seconds_counter >= 120)
-		{
-			SERVO_voidSetAngle(180);
-			seconds_counter=0;
-			_delay_ms(3000);
-			SERVO_voidSetAngle(0);
-		}
-
+		SERVO();
+		Ultrasonic();
 		LM35();
+
 	}
 
 
 	return 0;
+}
+void Ultrasonic(void)
+{
+	static u8 LastReadSecond = 255;
+
+
+	if ((seconds_counter % 10 == 0) && (seconds_counter != LastReadSecond))
+	{
+		LastReadSecond = seconds_counter;
+
+		LastDistance = Ultrasonic_GetDistance();
+
+
+		LCD_GotoXY(0,1);
+		LCD_voidWriteMoveString("Lvl:-");
+		LCD_GotoXY(4,1);
+		LCD_voidWriteMoveString("   ");
+		LCD_GotoXY(4,1);
+		LCD_voidWriteNumber(LastDistance);
+		LCD_voidWriteMoveString("cm ");
+
+
+		if (LastDistance > 10)
+		{
+			DIO_voidSetPinValue(PORTDID, PIN7, HIGH);
+
+			while (Ultrasonic_GetDistance() > 4)
+			{
+				_delay_ms(1000);
+			}
+
+			DIO_voidSetPinValue(PORTDID, PIN7, LOW);
+		}
+	}
+}
+void LM35(void)
+{
+	if(TEMP <= 20)
+	{
+		DIO_voidSetPinValue(PORTCID, PIN0, HIGH);
+	}
+	else
+	{
+		DIO_voidSetPinValue(PORTCID, PIN0, LOW);
+	}
+
+	if(TEMP != LM35_u16GetTemp())
+	{
+		TEMP = LM35_u16GetTemp();
+		LM35_DisplayTemp();
+	}
+}
+void SERVO(void)
+{
+	if(seconds_counter == 60)
+			{
+				SERVO_voidSetAngle(180);
+				_delay_ms(3000);
+				SERVO_voidSetAngle(0);
+			}else if(seconds_counter >= 120)
+			{
+				SERVO_voidSetAngle(180);
+				seconds_counter=0;
+				_delay_ms(3000);
+				SERVO_voidSetAngle(0);
+			}
 }
