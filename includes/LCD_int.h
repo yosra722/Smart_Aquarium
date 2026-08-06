@@ -15,7 +15,7 @@ void LCD_voidSendCommand( u8 u8CMD);
 void LCD_GotoXY(u8 X, u8 Y);
 
 void LCD_voidWriteString(u8 * u8string , u8 line);
-void LCD_voidWriteMoveString(u8 * u8string);
-void LCD_voidWriteNumber(u16 u16Number);
+void LCD_voidWriteMoveString(u8 * u8string );
+void LCD_voidWriteNumber(u16 u16Number , u8 line);
 
 #endif

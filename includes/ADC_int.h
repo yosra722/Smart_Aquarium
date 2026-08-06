@@ -1,27 +1,32 @@
-/*****************************************/
-/******** Author: Yosra Madkour **********/
-/******** Date  : 3/8/2026   *************/
-/******** File  : Interface File *********/
-/*****************************************/
+/************************************************/
+/************** Author: Khadija Naji ************/
+/************** Date  : 02/07/2026   ************/
+/************** File  : Interface File  *********/
+/********* Last Update: 02/08/2026   ************/
+/************************************************/
 
-#ifndef ADC_INTERFACE_H
-#define ADC_INTERFACE_H
+#define ADC_INT_H
+#ifdef  ADC_INT_H
+//set input pin in DIO
 
-void ADC_voidInit(void);
+void ADC_voidInitialization (void);
 
-void ADC_voidADCEnable(void);
-void ADC_voidADCDisable(void);
+void ADC_voidEnable(void);
+void ADC_voidDisable(void);
 
-void ADC_voidSelectChannel(u8 u8channel);
-void ADC_voidSelectRef(u8 u8ref);
-void ADC_voidSelectClock(void);
+void ADC_voidStartConversion(void); //Bit 6 – ADSC: ADC Start Conversion at ADCSRA & enable ADC
+void ADC_voidAutoTrigger(void); //Bit 6 at ADCSRA //Set auto Trigger Enable //set the source of auto Trigger
+
+void ADC_voidSetTriggerSourse(u8 u8TriggerSourseID);
+
+void ADC_voidInterruptEnable(void);
+void ADC_voidInterruptDisable(void);
 
 u16 ADC_u16Read(void);
 
-void ADC_voidStartConverstion(void);
-void ADC_voidAutoTrigger(void);
-void ADC_voidInterruptEnable(void);
-void ADC_voidInterruptDisable(void);
-void ADC_voidSetCallBack(void (*FunctionAddress)(void));
+
+#define LEFT_ADJUSTMEN   1
+#define RIGHT_ADJUSTMEN  0
+
 
 #endif

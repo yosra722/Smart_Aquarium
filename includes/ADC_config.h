@@ -1,22 +1,33 @@
-/*****************************************/
-/******** Author: Yosra Madkour **********/
-/******** Date  : 3/8/2026   *************/
-/******** File  : Configuration File *****/
-/*****************************************/
+/************************************************/
+/************** Author: Khadija Naji ************/
+/************** Date  : 02/08/2026   ************/
+/************** File  : Configuration File  *****/
+/********* Last Update: 02/08/2026   ************/
+/************************************************/
 
-#ifndef ADC_CONFIGRATION_H
-#define ADC_CONFIGRATION_H
+#define ADC_CONFIG_H
+#ifdef  ADC_CONFIG_H
 
-#define ADC_CHANNEL  		ADC0
 
-#define REG_ADJ 			RIGHT_ADJUSTMEN
+#define ADC_DEFAULT_CHANNAL    ADC0             //ADC0 --> ADC7 SINGLE ONLY
 
-#define TRIGGER_SELECT   	FREE_RUNNING
+#define ADC_DEFAULT_REG_ADJUST LEFT_ADJUSTMEN   // RIGHT_ADJUSTMEN
 
-#define REF_SOURCE			AVCC
+#define ADC_ENABLE_BIT         7         //AT ADCSRA REGISTER
+
 
 #endif
 
 
 
 
+
+
+
+/**
+
+
+
+
+#define TRIGGER_SELECt   FREE_RUNNING
+*/
