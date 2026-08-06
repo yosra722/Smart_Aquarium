@@ -31,7 +31,7 @@ void TIM0_voidInitialization(void)
 #elseif  TIM0_MODE ==  TIM0_PWM
 	SET_BIT(TCCR0,6);//0    // 10
 	CLR_BIT(TCCR0,3);//1    // 01
-#elseif  TIM0_MODE ==  TIM0_NORMAL
+#elseif  TIM0_MODE ==  TIM0_OVERFLOW
 	CLR_BIT(TCCR0,6);//0    // 10
 	CLR_BIT(TCCR0,3);//1    // 00
 #endif
@@ -55,6 +55,35 @@ void TIM0_voidInitialization(void)
 	TIM0_voidSetOVReg(0x00);
 //Clear OCR
 	TIM0_voidSetCTCReg(0x00);
+}
+void TIM0_voidSetMode(u8 u8TIM0Mode)
+{
+    switch(u8TIM0Mode)
+    {
+        case TIM0_FAST_PWM:
+            SET_BIT(TCCR0, 6);
+            SET_BIT(TCCR0, 3);
+            break;
+
+        case TIM0_CTC:
+            CLR_BIT(TCCR0, 6);
+            SET_BIT(TCCR0, 3);
+            break;
+
+        case TIM0_PWM: // Phase Correct PWM
+            SET_BIT(TCCR0, 6);
+            CLR_BIT(TCCR0, 3);
+            break;
+
+        case TIM0_OVERFLOW: // Normal Mode
+            CLR_BIT(TCCR0, 6);
+            CLR_BIT(TCCR0, 3);
+            break;
+
+        default:
+            // NO CODE
+            break;
+    }
 }
 
 void TIM0_voidSetPerscaller(u8 u8TIM0Prescaller)
@@ -153,4 +182,3 @@ void __vector_10(void)
 {
 	FunctionAddress2();
 }
-

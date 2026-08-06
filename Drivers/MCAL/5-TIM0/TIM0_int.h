@@ -11,6 +11,24 @@
 
 void TIM0_voidInitialization(void);
 void TIM0_voidSetPerscaller(u8 u8TIM0Prescaller);
+void TIM0_voidSetMode(u8 u8TIM0Mode);
+
+
+// TIM0_voidSetMode : TIM0_OVERFLOW , TIM0_PWM ,TIM0_CTC, TIM0_FAST_PWM
+#define TIM0_OVERFLOW    0
+#define TIM0_PWM         1
+#define TIM0_CTC         2
+#define TIM0_FAST_PWM    3
+
+//SetPerscaller
+#define  TIM0_NO_CLK                     0
+#define  TIM0_CLK_by_1                   1
+#define  TIM0_CLK_by_8                   2
+#define  TIM0_CLK_by_64                  3
+#define  TIM0_CLK_by_256                 4
+#define  TIM0_CLK_by_1024                5
+#define  TIM0_EXT_CLK_ON_T0_FALLINGEDGE  6
+#define  TIM0_EXT_CLK_ON_T0_RISINGEDGE   7
 /*****************NORMAL Mode*****************/
 // to Enable the interrupt of Over flow
 void TIM0_voidEnableOVInterrupt(void);
