@@ -10,7 +10,7 @@
 
 
 static void TIM0_voidCallback(void);
-static u16 TIM0_u16ConvertFromCountstoMicrosecound(u32 OV_counts , u16 u16CurrentRegValue );
+static u32 TIM0_u32ConvertFromCountstoMicrosecound(u16 OV_counts , u16 u16CurrentRegValue );
 
 
 #if      PERSCALLER_MODE == TIM0_CLK_by_1
@@ -27,7 +27,7 @@ static u16 TIM0_u16ConvertFromCountstoMicrosecound(u32 OV_counts , u16 u16Curren
     #define TICK_PRESCALER_REAL_VALUE   1
 #endif
 
-#define TICK_TIME_nSEC   ((TICK_PRESCALER_REAL_VALUE * 1000000000ULL ) / F_CPU)
+#define TICK_TIME_nSEC   ((TICK_PRESCALER_REAL_VALUE * 1000000 ) / F_CPU)
 
 
 #endif

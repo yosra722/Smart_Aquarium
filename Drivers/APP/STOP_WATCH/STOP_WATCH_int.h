@@ -9,18 +9,8 @@
 void STW_voidInitialization(void) ;
 void STW_voidStart(void);        //start count
 
-/************** Microsecond *********/
-u16  STW_u16StopANDWatch_usec(void);  // Stop counting and init STW
-u16  STW_u16Watch__usec(void);         //counting will continue _usec== microsecond
+u16 STW_u16StopANDWatch_usec(void);    // Stop counting and init STW
 
-/************** Millisecond *********/
-
-u32  STW_u32StopANDWatch_msec(void);
-u32  STW_u32Watch_msec(void);
-/************** Second *********/
-
-u16  STW_u16StopANDWatch_sec(void);
-u16  STW_u16Watch_sec(void);
 
 #endif
 #ifndef F_CPU

@@ -8,7 +8,7 @@
 #define STOP_WATCH_CONFIG_H
 #ifdef  STOP_WATCH_CONFIG_H
 
-#define PERSCALLER_MODE   TIM0_CLK_by_1
+#define PERSCALLER_MODE   TIM0_CLK_by_1  // tick time 0.125 usec
 /******TIM0_PRESCALLER options****/
 /*
  TIM0_NO_CLK
