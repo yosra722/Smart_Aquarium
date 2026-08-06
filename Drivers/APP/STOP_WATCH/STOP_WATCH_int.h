@@ -14,3 +14,6 @@ u16  STW_u16StopANDWatch_usec(void);  // Stop counting and init STW
 u16  STW_u16Watch__usec(void);         //counting will continue _usec== microsecond
 
 #endif
+#ifndef F_CPU
+#define F_CPU 8000000UL
+#endif
