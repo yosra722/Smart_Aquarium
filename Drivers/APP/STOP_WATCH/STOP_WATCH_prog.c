@@ -53,7 +53,7 @@ u16 STW_u16StopANDWatch_usec(void)  // Stop counting and init STW IN microsecond
 	TIM0_voidSetOVReg(0);
 
 	TIM0_u16CurrentRegValue += (256*(u16)OV_count);
-	return (TIM0_u16CurrentRegValue)  /8  ;
+	return ((TIM0_u16CurrentRegValue* TICK_TIME_NANO_SEC) / 1000)   ;
 }
 
 static void TIM0_voidCallback(void)
