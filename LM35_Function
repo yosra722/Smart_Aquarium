@@ -1,0 +1,18 @@
+u16 TEMP;
+void LM35(void)
+{
+	LM35_voidInit();
+	DIO_voidSetPinDirection(PORTCID, PIN0, OUTPUT);
+	DIO_voidSetPinValue(PORTCID, PIN0, LOW);
+
+	if(TEMP <= 20)
+	{
+		DIO_voidSetPinValue(PORTCID, PIN0, HIGH);
+	}
+
+	if(TEMP != LM35_u16GetTemp())
+	{
+		TEMP=LM35_u16GetTemp();
+		LM35_DisplayTemp();
+	}
+}
