@@ -27,7 +27,7 @@ static u32 TIM0_u32ConvertFromCountstoMicrosecound(u16 OV_counts , u16 u16Curren
     #define TICK_PRESCALER_REAL_VALUE   1
 #endif
 
-#define TICK_TIME_USEC   ((TICK_PRESCALER_REAL_VALUE * 1000000 ) / F_CPU)
+#define TICK_TIME_nSEC   ((TICK_PRESCALER_REAL_VALUE * 1000000 ) / F_CPU)
 
 
 #endif
