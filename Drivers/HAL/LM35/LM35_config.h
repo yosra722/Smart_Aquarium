@@ -7,7 +7,7 @@
 #ifndef LM35_CONFIGRATION_H
 #define LM35_CONFIGRATION_H
 
-#define  LM35_VOUT            PORT_A,PIN0
+#define  LM35_VOUT            PORTAID,PIN0
 
 
 #endif
