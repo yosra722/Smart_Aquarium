@@ -4,12 +4,12 @@
 /* Version ................ : V1.0                                            */
 /* Target MCU ............. : ATmega32                                        */
 /******************************************************************************/
-#include "STD_TYPES.h"
-#include "BIT_MATH.h"
+#include "Bit_Math.h"
+#include "STD_Types.h"
 
-#include "TIM2_Private.h"
-#include "TIM2_Config.h"
-#include "TIM2_Interface.h"
+#include "TIM2_private.h"
+#include "TIM2_config.h"
+#include "TIM2_int.h"
 
 
 
@@ -27,11 +27,11 @@ void TIM2_voidInit(void)
 {
 	#if TIM2_MODE == TIM2_NORMAL_MODE
 	CLR_BIT(TCCR2, WGM20);
-	CLR_BIT(TCCR2, WGM201);
+	CLR_BIT(TCCR2, WGM21);
 
 	#elif TIM2_MODE == TIM2_CTC_MODE
 	CLR_BIT(TCCR2, WGM20);
-	SET_BIT(TCCR2, WGM201);
+	SET_BIT(TCCR2, WGM21);
 
 	#elif TIM2_MODE == TIM2_FAST_PWM_MODE
 	SET_BIT(TCCR2, WGM21);
@@ -138,16 +138,19 @@ void TIM2_voidInitFastPWMWithInterrupt(void) {
     SET_BIT(TCCR2, WGM21);
 
     /* Hardware PWM output on PB3 (OC2 pin) for Pump control */
-    CLEAR_BIT(TCCR2, COM20);
+    CLR_BIT(TCCR2, COM20);
     SET_BIT(TCCR2, COM21);
 
     /* Clock Prescaler = 64 (F_CPU / 64) */
     SET_BIT(TCCR2, CS21);
     SET_BIT(TCCR2, CS20);
-    CLEAR_BIT(TCCR2, CS22);
+    CLR_BIT(TCCR2, CS22);
 
     /* Enable Overflow Interrupt for background timing */
     SET_BIT(TIMSK, TOIE2);
+
+    overflow_counter = 0;
+    seconds_counter = 0 ;
 }
 
 /* ISRs */
@@ -167,7 +170,9 @@ void __vector_5 (void)
 	overflow_counter++;
 
     /* 488 overflows equal 1 second (488 * 2.048ms ≈ 1000ms) */
-    if (overflow_counter >= 488) {
+    if (overflow_counter >= 488)
+    {
+
         seconds_counter++;      /* Increment second counter */
         overflow_counter = 0;   /* Reset tick counter */
     }

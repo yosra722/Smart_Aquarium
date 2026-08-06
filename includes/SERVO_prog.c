@@ -5,8 +5,8 @@
 /* Target MCU ............. : ATmega32                                        */
 /******************************************************************************/
 
-#include "STD_TYPES.H"
-#include "BIT_MATH.H"
+#include "STD_Types.h"
+#include "BIT_Math.h"
 #include "DIO_int.h"
 #include "SERVO_private.h"
 #include "SERVO_config.h"
@@ -14,11 +14,11 @@
 
 void SERVO_voidInit(void){
     #if SERVO_CHANNEL == SERVO_CHANNEL_A
-    DIO_voidSetPinDirection(PORTDID, PIN5, OUTPUT);
+    //DIO_voidSetPinDirection(PORTDID, PIN5, OUTPUT);
     SET_BIT(TCCR1A_REG,COM1A1_BIT);
 
     #elif SERVO_CHANNEL == SERVO_CHANNEL_B
-    DIO_voidSetPinDirection(PORTDID, PIN4, OUTPUT);
+    //DIO_voidSetPinDirection(PORTDID, PIN4, OUTPUT);
     SET_BIT(TCCR1A_REG,COM1B1_BIT);
     #endif
     
@@ -36,7 +36,7 @@ void SERVO_voidInit(void){
     ICR1_REG = SERVO_TIMER1_TOP_VALUE;
 }
 
-void Servo_voidSetAngle(u8 u8Angle){
+void SERVO_voidSetAngle(u8 u8Angle){
     if (u8Angle > SERVO_MAX_PULSE_TICKS){
         u8Angle = SERVO_MAX_PULSE_TICKS;
     }

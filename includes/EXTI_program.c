@@ -5,8 +5,8 @@
  *      Author: Amena hassan
  */
 
-#include "../../LIB/Std_Types.h"
-#include "../../LIB/Bit_Math.h"
+#include "Bit_Math.h"
+#include "STD_Types.h"
 
 #include "EXTI_int.h"
 #include "EXTI_private.h"

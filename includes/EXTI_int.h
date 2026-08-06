@@ -8,7 +8,7 @@
 #ifndef EXTI_INT_H_
 #define EXTI_INT_H_
 
-#include "../../LIB/STD_Types.h "
+
 
 #define	LOW_LEVEL		0
 #define	ANY_CHANGE		1

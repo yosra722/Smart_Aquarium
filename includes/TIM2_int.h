@@ -8,10 +8,10 @@
 #ifndef TIM2_INTERFACE_H_
 #define TIM2_INTERFACE_H_
 
-#include "STD_TYPES.h"
+#include "STD_Types.h"
 
 /* Pointer to Function */
-typedef void (*pf)(void);
+
 
 /*******************************************************************************
  *                            Prototypes                                 *
@@ -36,6 +36,6 @@ void TIM2_voidCOMPSetCallBack(pf pvCOMPFunctionAddress);
 /*PWM*/
 void TIM2_voidGeneratePWM(u8 u8DutyCycle);
 
-void TIM2_voidInitFastPWMWithInterrupt(void)ß
+void TIM2_voidInitFastPWMWithInterrupt(void);
 
 #endif /* TIM2_INTERFACE_H_ */

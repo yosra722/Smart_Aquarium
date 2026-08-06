@@ -4,8 +4,8 @@
 /******** File  : Program File ***********/
 /*****************************************/
 
-#include "Std_Types.h"
 #include "Bit_Math.h"
+#include "STD_Types.h"
 
 
 
@@ -13,10 +13,6 @@
 #include "ADC_config.h"
 #include "ADC_int.h"
 #include "ADC_private.h"
-
-
-
-
 
 
 void ADC_voidInit(void)
@@ -90,7 +86,7 @@ u16 ADC_u16Read(void)
 {
 	u16 value ;
 
-	while(!GET_BIT(ADCSRA, ADIF));
+	while(!Get_Bit(ADCSRA, ADIF));
 	SET_BIT(ADCSRA, ADIF);
 
 	u16 low_reg=ADCL;
