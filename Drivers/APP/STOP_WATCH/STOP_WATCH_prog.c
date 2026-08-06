@@ -77,7 +77,7 @@ static void TIM0_voidCallback(void)
 }
 static u16 TIM0_u16ConvertFromCountstoMicrosecound(u16 OV_counts , u16 u16CurrentRegValue )
 {
-	u16 TotalCount = (OV_counts * 255 ) + u16CurrentRegValue ;
+	u16 TotalCount = (OV_counts * 256 ) + u16CurrentRegValue ;
 
 	u16 TotalTime_nanosec  = TICK_TIME_nSEC * TotalCount ;
 
