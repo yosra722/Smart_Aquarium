@@ -1,0 +1,32 @@
+void TIMER0_voidInitFastPWMWithInterrupt(void) {
+    /* Set Timer0 to Fast PWM Mode */
+    SET_BIT(TCCR0, WGM00);
+    SET_BIT(TCCR0, WGM01);
+
+    /* Hardware PWM output on PB3 (OC0 pin) for Pump control */
+    CLEAR_BIT(TCCR0, COM00);
+    SET_BIT(TCCR0, COM01);
+
+    /* Clock Prescaler = 64 (F_CPU / 64) */
+    SET_BIT(TCCR0, CS01);
+    SET_BIT(TCCR0, CS00);
+    CLEAR_BIT(TCCR0, CS02);
+
+    /* Enable Overflow Interrupt for background timing */
+    SET_BIT(TIMSK, TOIE0);
+}
+
+static u16 overflow_counter = 0;
+volatile u8 seconds_counter = 0; /* Global time counter for main.c */
+
+/* Timer0 Overflow ISR: Triggered every 2.048ms */
+void __vector_11 (void) __attribute__ ((signal));
+void __vector_11 (void) {
+    overflow_counter++;
+    
+    /* 488 overflows equal 1 second (488 * 2.048ms ≈ 1000ms) */
+    if (overflow_counter >= 488) {
+        seconds_counter++;      /* Increment second counter */
+        overflow_counter = 0;   /* Reset tick counter */
+    }
+}
