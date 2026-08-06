@@ -31,11 +31,16 @@ u16 LM35_u16GetTemp(void)
     TEMP = (TEMP*500)/1024;
     return TEMP;
 }
-
+//T :
 void LM35_DisplayTemp(void)
 {
+	LCD_GotoXY(0,0);
+	LCD_voidWriteMoveString("T :");
+
 	LM35_voidClearTem();
-	LCD_GotoXY(7,0);
+
+	LCD_GotoXY(4,0);
+
 	LCD_voidWriteNumber(LM35_u16GetTemp());
 	LCD_voidWriteMoveString(" C");
 }
@@ -43,6 +48,6 @@ void LM35_DisplayTemp(void)
 
 static void LM35_voidClearTem(void)
 {
-	LCD_GotoXY(7,0);
+	LCD_GotoXY(4,0);
 	LCD_voidWriteMoveString("   ");
 }

@@ -13,7 +13,7 @@
  - TIM2_CTC_MODE
  - TIM2_FAST_PWM_MODE
  */
-#define TIM2_MODE        TIM2_NORMAL_MODE
+#define TIM2_MODE        TIM2_CTC_MODE
 
 /*
   Select Timer 2 Prescaler:

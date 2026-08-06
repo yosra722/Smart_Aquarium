@@ -38,4 +38,7 @@ void TIM2_voidGeneratePWM(u8 u8DutyCycle);
 
 void TIM2_voidInitFastPWMWithInterrupt(void);
 
+/* Precise 1ms-tick CTC mode : drives seconds_counter accurately */
+void TIM2_voidInitCTC(void);
+
 #endif /* TIM2_INTERFACE_H_ */

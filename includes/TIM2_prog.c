@@ -6,6 +6,7 @@
 /******************************************************************************/
 #include "Bit_Math.h"
 #include "STD_Types.h"
+#include <stddef.h>
 
 #include "TIM2_private.h"
 #include "TIM2_config.h"
@@ -21,6 +22,7 @@
 static pf TIM2_pvOVFCallBackFunc  = NULL;
 static pf TIM2_pvCOMPCallBackFunc = NULL;
 static u16 overflow_counter = 0;
+static u16 millis_counter = 0;   /* used by TIM2_voidInitCTC for the 1ms tick */
 volatile u8 seconds_counter = 0; /* Global time counter for main.c */
 
 void TIM2_voidInit(void)
@@ -153,10 +155,43 @@ void TIM2_voidInitFastPWMWithInterrupt(void) {
     seconds_counter = 0 ;
 }
 
+/* Initialize Timer2 in CTC mode to generate a precise 1ms tick,
+ * which is accumulated into seconds_counter (accurate alternative
+ * to the overflow-based approximation in TIM2_voidInitFastPWMWithInterrupt) */
+void TIM2_voidInitCTC(void)
+{
+	/* Select CTC mode (WGM21 = 1, WGM20 = 0) */
+	SET_BIT(TCCR2, WGM21);
+	CLR_BIT(TCCR2, WGM20);
+
+	/* Target value for 1ms tick (8MHz / 64 prescaler = 125kHz -> 249 counts = 2 ms) */
+	OCR2 = 249;
+
+	/* Enable Timer2 Compare Match interrupt */
+	SET_BIT(TIMSK, OCIE2);
+
+	/* Prescaler = 64 (CS22 = 1, CS21 = 0, CS20 = 0) */
+	SET_BIT(TCCR2, CS22);
+	CLR_BIT(TCCR2, CS21);
+	CLR_BIT(TCCR2, CS20);
+
+	millis_counter  = 0;
+	seconds_counter = 0;
+}
+
 /* ISRs */
 void __vector_4 (void) __attribute__ ((signal, used));
 void __vector_4 (void)
 {
+	/* 1ms tick accounting (only meaningful while running in CTC mode,
+	 * i.e. after TIM2_voidInitCTC() ) */
+	millis_counter=millis_counter+2;
+	if (millis_counter >= 1000)
+	{
+		seconds_counter++;
+		millis_counter = 0;
+	}
+
 	if (TIM2_pvCOMPCallBackFunc != NULL)
 	{
 		TIM2_pvCOMPCallBackFunc();
@@ -169,7 +204,7 @@ void __vector_5 (void)
 {
 	overflow_counter++;
 
-    /* 488 overflows equal 1 second (488 * 2.048ms ≈ 1000ms) */
+    /* 488 overflows equal 1 second (488 * 2.048ms  1000ms) */
     if (overflow_counter >= 488)
     {
 
