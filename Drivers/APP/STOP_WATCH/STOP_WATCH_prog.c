@@ -42,22 +42,32 @@ void STW_voidStart(void) //start count
 }
 
 /************************ Microsecond ***************************/
+#define STW_CALIBRATION_OFFSET_US   285
 u16 STW_u16StopANDWatch_usec(void)
 {
-	u16 TIM0_u16CurrentRegValue ;
-	u16 Local_u16OVCount;
+    u16 TIM0_u16CurrentRegValue;
+    u16 Local_u16OVCount;
+    u16 Local_u16Result;
 
-	GIE_voidDisable();
-	TIM0_u16CurrentRegValue = (u16)TIM0_u8ReadOVReg();
-	Local_u16OVCount = (u16)OV_count;
-	GIE_voidEnable();
+    GIE_voidDisable();
+    TIM0_u16CurrentRegValue = (u16)TIM0_u8ReadOVReg();
+    Local_u16OVCount = (u16)OV_count;
+    GIE_voidEnable();
 
-	TIM0_voidDisableOVInterrupt();
-	TIM0_u16CurrentRegValue += (256 * Local_u16OVCount);
-	TIM0_voidSetOVReg(0);
-	OV_count = 0;
+    TIM0_voidDisableOVInterrupt();
 
-	return (TIM0_u16CurrentRegValue);
+    Local_u16Result = TIM0_u16CurrentRegValue + (256 * Local_u16OVCount);
+
+    TIM0_voidSetOVReg(0);
+    OV_count = 0;
+
+
+    if (Local_u16Result > STW_CALIBRATION_OFFSET_US)
+        Local_u16Result -= STW_CALIBRATION_OFFSET_US;
+    else
+        Local_u16Result = 0;
+
+    return Local_u16Result;
 }
 
 static void TIM0_voidCallback(void)
