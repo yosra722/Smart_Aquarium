@@ -2,7 +2,7 @@
  * EXTI_config.h
  *
  *  Created on: Aug 4, 2026
- *      Author: B2B
+ *      Author: Amena hassan
  */
 
 #ifndef EXTI_CONFIG_H_
