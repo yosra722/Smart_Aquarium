@@ -7,6 +7,8 @@
 #include "Std_Types.h"
 #include "Bit_Math.h"
 
+#include <avr/delay.h>
+
 #include"DIO_int.h"
 #include"ADC_int.h"
 
@@ -19,20 +21,15 @@
 void LM35_voidInit(void)
 {
 	DIO_voidSetPinDirection(LM35_VOUT,INPUT);
-
 	ADC_voidInit();
-
 	ADC_voidADCEnable();
-
 	LCD_GotoXY(0,0);
-	LCD_voidWriteMoveString("TEMP : ");
 }
 u16 LM35_u16GetTemp(void)
 {
 	ADC_voidStartConverstion();
 	u16 TEMP=ADC_u16Read();
     TEMP = (TEMP*500)/1024;
-
     return TEMP;
 }
 
